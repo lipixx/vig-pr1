@@ -17,7 +17,7 @@ GLWidget::GLWidget(QWidget * parent):QGLWidget(parent)
 // initializeGL() - Aqui incluim les inicialitzacions del contexte grafic.
 void GLWidget::initializeGL()
 {
-  glClearColor(0.4f, 0.4f, 0.8f, 1.0f);
+  glClearColor(0.45f, 0.69f, 0.90f, 1.0f);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glEnable(GL_DEPTH_TEST);
   // inicialitzem també l'escena
@@ -26,11 +26,59 @@ void GLWidget::initializeGL()
   computeDefaultCamera();
 }
 
+void GLWidget::initModelView()
+{  
+  // Inicialitza la matriu Modelview
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glTranslatef(0,0,-distancia);
+  glRotatef(angleZ,0,0,1);
+  glRotatef(angleX,1,0,0);
+  glRotatef(angleY,0,1,0);
+  glTranslatef(-VRP.x,-VRP.y,-VRP.z);
+}
+
+void GLWidget::initProjection()
+{    
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  
+  //Camera PERSPECTIVA, els objectes tornen grans i petits
+  //segons la distància de la càmera
+  gluPerspective((float)2.0*fovy,ratio, near, far);
+}
+
 void GLWidget::computeDefaultCamera()
 {
-  // Cal inicialitzar els paràmetres necessaris per a definir la càmera
-  // amb els valors que ens permetin obtenir la càmera inicial desitjada
+  //Inicialitzem la càmera inicial desitjada
+  
+  //Calculem l'esfera contenidora. Es guarda el resultat dins radi i VRP.
+  //VRP és el centre de l'escena.
+  scene.CalculaEsfera(radi,VRP);
+  distancia = 2*radi;
+  near = radi;
+  far = 3*radi;
+  angleX=40.0; // Pujem la càmera 45 graus respecte l'eix XZ
+  angleY=340.0; // Desplaçem la camera 45 graus respecte l'eix YZ (315=-45)
+  angleZ=0.0;
 
+  /*
+    Tenint en compte que:
+    Radi = perpendicular a la tangent que passa per l'esfera mínima.
+    
+    El sinus de l'angle de la càmera, és:
+    Sin @ = catet oposat (radi) / hipotenusa (distància)
+
+    Llavors, l'angle de la càmera, com que estarà al revés d'aquest
+    càlcul, es calcula fent l'arcsinus.
+  */
+ 
+  fovy = (float) asin(radi/distancia)*RAD2DEG;
+
+  /*Ratio d'aspecte (16:9, 4:3..)
+    width i height és la mida del viewport.
+   */
+  ratio = (float) width()/height();
 }
 
 // paintGL() - callback cridat cada cop que cal refrescar la finestra. 
@@ -38,6 +86,10 @@ void GLWidget::paintGL( void )
 { 
   // Esborrem els buffers
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+  // Init de les matrius
+  initModelView();
+  initProjection();
 
   // dibuixar eixos aplicacio
   glBegin(GL_LINES);
@@ -48,6 +100,7 @@ void GLWidget::paintGL( void )
   
   // pintem l'escena
   scene.Render();
+
 }
 
 // resizeGL() - Cridat quan es canvia el tamany del viewport.

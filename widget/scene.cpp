@@ -51,9 +51,13 @@ void Scene::transformPoint(Point &p)
 // Mètode que pinta l'escena: tots els objectes i el vehicle
 void Scene::Render()
 {
+  int num = lreferencies.size();
+
   // Cal pintar tots els objectes de l'escena que es troben als vectors
   // Cal pintar també el vehicle, si s'escau
-
+  for (int i=0; i<num;i++) lreferencies[i].Render(lobjects);
+  num = circuit.size();
+  for (int i=0; i<num; i++) circuit[i].Render(lobjects);
 }
 
 void Scene::AddObject(Object &o)
