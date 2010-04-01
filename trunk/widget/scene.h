@@ -23,7 +23,7 @@ class Scene
   static int DOBLE;
   static int TRIPLE;
   static int FANAL;
-
+  
 	
   // Tindrem un vector amb els models geomètrics dels objectes de l'escena
   // i els altres dos amb instàncies seves (instàncies o referències a 

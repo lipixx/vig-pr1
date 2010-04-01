@@ -1,6 +1,7 @@
 #ifndef _GLWIDGET_H_
 #define _GLWIDGET_H_
 
+
 #include <QtOpenGL/qgl.h>
 #include <QKeyEvent>
 #include <iostream>
@@ -12,6 +13,12 @@
 #include "material_lib.h"
 #include "point.h"
 #include "scene.h"
+
+#include <cmath>
+
+//Per convertir a graus
+#define PI 3.14159265
+#define RAD2DEG 180/PI
 
 class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
 {
@@ -49,7 +56,11 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
   virtual void mouseMoveEvent(QMouseEvent *e);
  
   void computeDefaultCamera(); 
- 
+
+  //Inicialitzem les matrius ModelView i Projection
+  void initModelView();
+  void initProjection();
+
  private:
 
   // interaccio
@@ -60,7 +71,15 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
   
   Scene scene;  // Escena a representar en el widget
 
-  // Afegiu els atributs que necessiteu
+  //Atributs meus
+  //Paràmetres càmera
+  GLfloat fovy;
+  //View Reference Point, és de la classe point i representa
+  //un punt a l'espai.
+  Point VRP;
+  double distancia,radi,near,far;
+  float angleX,angleY,angleZ,ratio;
+  
 };
 
 #endif

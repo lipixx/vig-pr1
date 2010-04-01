@@ -12,13 +12,27 @@ Referencia::~Referencia(void)
 
 void Referencia::Render(std::vector<Object> &lobjects)
 {
-  //float sx, sy, sz;
+  float sx, sy, sz;
 
   Object o=lobjects[this->object];
   Box box=o.boundingBox();
 
   // A partir d'aquí, cal aplicar les transformacions de model necessàries 
   // i pintar l'objecte
+
+  sx = box.maxb.x - box.minb.x;
+  sy = box.maxb.y - box.minb.y;
+  sz = box.maxb.z - box.minb.z;
+
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  
+  glTranslatef(pos.x,pos.y,pos.z);
+  glRotatef(orientation,0.0,1.0,0.0);
+  glScalef(size.x/sx,size.y/sy,size.z/sz);
+  glTranslatef(-(box.maxb.x+box.minb.x)/2.0,-box.minb.y,-(box.maxb.z+box.minb.z)/2.0);
+  o.Render();
+  glPopMatrix();
 
 }
 
