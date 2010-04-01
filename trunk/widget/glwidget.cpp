@@ -50,8 +50,7 @@ void GLWidget::initProjection()
 
 void GLWidget::computeDefaultCamera()
 {
-  //Inicialitzem la càmera inicial desitjada
-  
+  //Inicialitzem els paràmetres de la càmera inicial desitjada
   //Calculem l'esfera contenidora. Es guarda el resultat dins radi i VRP.
   //VRP és el centre de l'escena.
   scene.CalculaEsfera(radi,VRP);
@@ -61,7 +60,6 @@ void GLWidget::computeDefaultCamera()
   angleX=40.0; // Pujem la càmera 45 graus respecte l'eix XZ
   angleY=340.0; // Desplaçem la camera 45 graus respecte l'eix YZ (315=-45)
   angleZ=0.0;
-
   /*
     Tenint en compte que:
     Radi = perpendicular a la tangent que passa per l'esfera mínima.
@@ -72,7 +70,6 @@ void GLWidget::computeDefaultCamera()
     Llavors, l'angle de la càmera, com que estarà al revés d'aquest
     càlcul, es calcula fent l'arcsinus.
   */
- 
   fovy = (float) asin(radi/distancia)*RAD2DEG;
 
   /*Ratio d'aspecte (16:9, 4:3..)
@@ -84,15 +81,17 @@ void GLWidget::computeDefaultCamera()
 // paintGL() - callback cridat cada cop que cal refrescar la finestra. 
 void GLWidget::paintGL( void )
 { 
+
   // Esborrem els buffers
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-
+  
   // Init de les matrius
   initModelView();
   initProjection();
-
+  
   // dibuixar eixos aplicacio
   glBegin(GL_LINES);
+  
   glColor3f(1,0,0); glVertex3f(0,0,0); glVertex3f(20,0,0); // X
   glColor3f(0,1,0); glVertex3f(0,0,0); glVertex3f(0,20,0); // Y
   glColor3f(0,0,1); glVertex3f(0,0,0); glVertex3f(0,0,20); // Z
@@ -100,14 +99,12 @@ void GLWidget::paintGL( void )
   
   // pintem l'escena
   scene.Render();
-
 }
 
 // resizeGL() - Cridat quan es canvia el tamany del viewport.
 void GLWidget::resizeGL (int width, int height)
 {
   glViewport (0, 0, width, height);
-
   updateGL();
 }
 

@@ -17,7 +17,7 @@
 #include <cmath>
 
 //Per convertir a graus
-#define PI 3.14159265
+#define PI 3.1415926535898
 #define RAD2DEG 180/PI
 
 class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget

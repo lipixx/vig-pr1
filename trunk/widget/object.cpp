@@ -36,23 +36,14 @@ void Object::Render()
     {
 
       m = Scene::matlib.material(faces[i].material);  
-      
-      GLfloat ka[]={m.ka.r,m.ka.g,m.ka.b, 1.0};
-      GLfloat kd[]={m.kd.r,m.kd.g,m.kd.b, 1.0};
-      GLfloat ks[]={m.ks.r,m.ks.g,m.ks.b, 1.0};
-      GLfloat shininess[]= { m.shininess};
-      
-      glMaterialfv(GL_FRONT,GL_AMBIENT,ka);
-      glMaterialfv(GL_FRONT,GL_DIFFUSE,kd);
-      glMaterialfv(GL_FRONT,GL_SPECULAR,ks);
-      glMaterialfv(GL_FRONT,GL_SHININESS,shininess);
-      
+      glColor3f(m.kd.r,m.kd.g,m.kd.b);
+
       // definim poligon pq hi pot haver cares de 3 o 4 vertexs
       glBegin(GL_POLYGON); 
-     
+
       // recorrem cada vertex de la cara "i"
       for (uint j=0;j<faces[i].vertices.size();j++)
-	  glVertex3f(vertices[faces[i].vertices[j]].coord.x,vertices[faces[i].vertices[j]].coord.y, vertices[faces[i].vertices[j]].coord.z);
+        glVertex3f(vertices[faces[i].vertices[j]].coord.x,vertices[faces[i].vertices[j]].coord.y, vertices[faces[i].vertices[j]].coord.z);
       
       glEnd();
     }
