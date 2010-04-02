@@ -24,11 +24,9 @@ void GLWidget::initializeGL()
   scene.Init();
   // dimensions escena i camera inicial
   computeDefaultCamera();
-  initModelView();
-  initProjection();
 }
 
-void GLWidget::initModelView()
+void GLWidget::updateModelView()
 {  
   // Inicialitza la matriu Modelview
   glMatrixMode(GL_MODELVIEW);
@@ -46,7 +44,7 @@ void GLWidget::initModelView()
   glTranslatef(-VRP.x,-VRP.y,-VRP.z);
 }
 
-void GLWidget::initProjection()
+void GLWidget::updateProjection()
 {    
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -98,6 +96,9 @@ void GLWidget::paintGL( void )
   // Esborrem els buffers
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
   
+  updateModelView();
+  updateProjection();
+  
   // dibuixar eixos aplicacio
   glBegin(GL_LINES);
   
@@ -120,8 +121,7 @@ void GLWidget::resizeGL (int w, int h)
 
   if (ratio < 1) //Si w < h
       dynamic_fovy=atan(tan(fovy*DEG2RAD/2)/ratio)*RAD2DEG*2;
-  
-  initProjection();
+
   updateGL();
 }
 
@@ -211,6 +211,8 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
   if (DoingInteractive == ROTATE)
   {
     // Fem la rotació
+	angleX= angleX + (e->y()-yClick)/2;
+	angleY= angleY + (e->x()-xClick)/2;
   }
   else if (DoingInteractive == ZOOM)
   {

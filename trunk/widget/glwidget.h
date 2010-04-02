@@ -59,8 +59,8 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
   void computeDefaultCamera(); 
 
   //Inicialitzem les matrius ModelView i Projection
-  void initModelView();
-  void initProjection();
+  void updateModelView();
+  void updateProjection();
 
  private:
 
