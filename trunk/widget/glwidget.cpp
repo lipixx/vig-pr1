@@ -24,6 +24,8 @@ void GLWidget::initializeGL()
   scene.Init();
   // dimensions escena i camera inicial
   computeDefaultCamera();
+  initModelView();
+  initProjection();
 }
 
 void GLWidget::initModelView()
@@ -51,7 +53,10 @@ void GLWidget::initProjection()
   
   //Camera PERSPECTIVA, els objectes tornen grans i petits
   //segons la distància de la càmera
-  gluPerspective(fovy,ratio,near,far);
+  if (ratio < 1)
+      gluPerspective(dynamic_fovy,ratio,near,far);
+    else
+      gluPerspective(fovy,ratio,near,far);
 }
 
 void GLWidget::computeDefaultCamera()
@@ -70,19 +75,20 @@ void GLWidget::computeDefaultCamera()
   angleX=40.0; 
   angleY=340.0;
   angleZ=0.0;
+
   /*
     Radi és perpendicular a la tangent que passa per l'esfera mínima.
     La tangent d'un angle de la càmera, és:
-    tan α  = catet oposat (radi) / distància 
-    Llavors, necessitem multiplicar-ho per 2.
+    tanα = catet oposat (radi) / distància 
+    Llavors, necessitem trobar l'angle i multiplicar-ho per 2.
   */
-  fovy = (float) (2*tanf(radi/distancia))*RAD2DEG;
+  fovy = (float) 2 * atanf(radi/distancia) * RAD2DEG;
+  
 
   /*Ratio d'aspecte (16:9, 4:3..)
     width i height és la mida del viewport.
    */
-  ratio = (float) width()/height();
-  
+  ratio = (float) width()/height();  
 }
 
 // paintGL() - callback cridat cada cop que cal refrescar la finestra. 
@@ -91,10 +97,6 @@ void GLWidget::paintGL( void )
 
   // Esborrem els buffers
   glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
-  
-  // Init de les matrius
-  initModelView();
-  initProjection();
   
   // dibuixar eixos aplicacio
   glBegin(GL_LINES);
@@ -117,12 +119,9 @@ void GLWidget::resizeGL (int w, int h)
   ratio = (float) w/h;
 
   if (ratio < 1) //Si w < h
-    {
-      /**A IMPLEMENTAR**/
-      //float temp = fovy*DEG2RAD/2;
-      //fovy = 2*fovy;
-    }
-  // cout << w <<":"<<h<<endl;
+      dynamic_fovy=atan(tan(fovy*DEG2RAD/2)/ratio)*RAD2DEG*2;
+  
+  initProjection();
   updateGL();
 }
 
