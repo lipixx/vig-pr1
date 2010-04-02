@@ -35,6 +35,8 @@ class Object
   vector<Vertex> vertices;  // vector amb els vertexs de l'objecte
   vector<Face> faces;       // vector amb les cares de l'objecte
 
+  std::string getName(void);
+
  private: 
   std::string name;
   Box _boundingBox;   // caixa contenidora de l'objecte.

@@ -35,7 +35,7 @@ void Box::Render(double r, double g, double b)
   glBegin(GL_LINES);
   glVertex3f(minb.x, minb.y, minb.z);
   glVertex3f(maxb.x, minb.y, minb.z);
-  
+    
   glVertex3f(maxb.x, minb.y, minb.z);
   glVertex3f(maxb.x, maxb.y, minb.z);
   

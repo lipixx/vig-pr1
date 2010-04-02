@@ -28,25 +28,45 @@ void Object::updateBoundingBox()
 
 void Object::Render()
 {
-  // Cal recorrer l'estructura de l'objecte per a pintar les seves cares
-    Material m;
-
-// Recorrem totes les cares de l'objecte 
+  Material m;
+  
+  //Recorrem totes les cares de l'objecte 
   for (uint i=0;i<faces.size();i++)
     {
-
+      //Obtenim l'ID del material de la cara actual
+      faces[i].material;
+      
+      /*Utilitzem l'atribut matlib de Scene, i cridem al 
+	mètode material(int), que retorna el material associat
+        a l'index passat per paràmetre
+      */
       m = Scene::matlib.material(faces[i].material);  
+      
+      //Amb el material, n'obtenim els colors
       glColor3f(m.kd.r,m.kd.g,m.kd.b);
 
-      // definim poligon pq hi pot haver cares de 3 o 4 vertexs
+      /*Definim que treballem amb poligon pq hi
+	pot haver cares de 3 o 4 vertexs, per exemple les finestres
+	de la casa
+      */
       glBegin(GL_POLYGON); 
 
-      // recorrem cada vertex de la cara "i"
+      //Per cada vertex de la cara actual
       for (uint j=0;j<faces[i].vertices.size();j++)
-        glVertex3f(vertices[faces[i].vertices[j]].coord.x,vertices[faces[i].vertices[j]].coord.y, vertices[faces[i].vertices[j]].coord.z);
+	//Pintar-lo on toca, accedint en ordre als
+	//vèrtexs de Object::vertices<Vertex>.
+        glVertex3f(
+		   vertices[faces[i].vertices[j]].coord.x,
+		   vertices[faces[i].vertices[j]].coord.y,
+		   vertices[faces[i].vertices[j]].coord.z);
       
       glEnd();
     }
+}
+
+std::string Object::getName()
+{
+  return name;
 }
 
 /*
@@ -346,7 +366,7 @@ void Object::readObj(const char* filename, MaterialLib& matlib)
 	float x = atof (words[1]);
 	float y = atof (words[2]);
 	float z = atof (words[3]);
-	
+
 	if (nwords == 5) 
 	{
 	  float w = atof (words[4]);
