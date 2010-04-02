@@ -177,7 +177,7 @@ void GLWidget::mousePressEvent( QMouseEvent *e){
   {
     DoingInteractive = ZOOM;
   }
-  else if (e->button()&Qt::LeftButton &&  e->modifiers() &Qt::ControlModifier)
+  else if (e->button()&Qt::RightButton &&  e->modifiers() &Qt::ShiftModifier)
   {
     DoingInteractive = PAN;
   }
@@ -209,19 +209,31 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
   // com s'escaigui...
   
   if (DoingInteractive == ROTATE)
-  {
-    // Fem la rotació
-	angleX= angleX + (e->y()-yClick)/2;
-	angleY= angleY + (e->x()-xClick)/2;
-  }
+    {
+      // Fem la rotació
+      angleX= angleX + (e->y()-yClick)/2;
+      angleY= angleY + (e->x()-xClick)/2;
+    }
   else if (DoingInteractive == ZOOM)
-  {
-    // Fem el zoom
-  }
+    {
+      // Fem el zoom
+      if(dynamic_fovy+(e->y()-yClick)/2 >0 
+	 && dynamic_fovy+(e->y()-yClick)/2< 180)
+	{
+	  dynamic_fovy = dynamic_fovy+(e->y()-yClick)/2;
+	  fovy=dynamic_fovy;
+	}
+    }
   else if (DoingInteractive==PAN)
-  {  
-    // Fem el pan
-  }   
+    {  
+      // Fem el pan
+      float m[4][4];
+      glGetFloatv(GL_MODELVIEW_MATRIX,&m[0][0]);  
+      Point s = Point(m[0][0],m[1][0],m[2][0]) * (xClick - e->x()) * (0.4);
+      Point u = Point(m[0][1],m[1][1],m[2][1]) * (e->y() - yClick) * (0.4);
+      VRP += s + u;
+    }   
+  
   xClick = e->x();
   yClick = e->y();
   
