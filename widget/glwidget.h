@@ -74,7 +74,7 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
 
   //Atributs meus
   //Paràmetres càmera
-  GLfloat fovy;
+  GLfloat fovy,dynamic_fovy;
   //View Reference Point, és de la classe point i representa
   //un punt a l'espai.
   Point VRP;
