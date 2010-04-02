@@ -20,7 +20,7 @@ void GLWidget::initializeGL()
   glClearColor(0.45f, 0.69f, 0.90f, 1.0f);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glEnable(GL_DEPTH_TEST);
-  // inicialitzem tambÈ l'escena
+  // inicialitzem tamb√© l'escena
   scene.Init();
   // dimensions escena i camera inicial
   computeDefaultCamera();
@@ -31,10 +31,16 @@ void GLWidget::initModelView()
   // Inicialitza la matriu Modelview
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
+  
+  //Posem l'escena a la dist√†ncia que volguem, negatiu perqu√© s'allunyi de la c√†mera
   glTranslatef(0,0,-distancia);
+
+  //Rotem l'escena els angles que ens interessi, respecte el SCA
   glRotatef(angleZ,0,0,1);
   glRotatef(angleX,1,0,0);
   glRotatef(angleY,0,1,0);
+
+  //Centrem l'escena a l'origen de cordenades de l'SCA
   glTranslatef(-VRP.x,-VRP.y,-VRP.z);
 }
 
@@ -44,38 +50,39 @@ void GLWidget::initProjection()
   glLoadIdentity();
   
   //Camera PERSPECTIVA, els objectes tornen grans i petits
-  //segons la dist‡ncia de la c‡mera
-  gluPerspective((float)2.0*fovy,ratio, near, far);
+  //segons la dist√†ncia de la c√†mera
+  gluPerspective(fovy,ratio,near,far);
 }
 
 void GLWidget::computeDefaultCamera()
 {
-  //Inicialitzem els par‡metres de la c‡mera inicial desitjada
-  //Calculem l'esfera contenidora. Es guarda el resultat dins radi i VRP.
-  //VRP Ès el centre de l'escena.
+  /*Inicialitzem els par√†metres de la c√†mera inicial desitjada
+  Calculem l'esfera contenidora. Es guarda el resultat dins radi i VRP.
+  VRP √©s el centre de l'escena.
+  */
   scene.CalculaEsfera(radi,VRP);
+
   distancia = 2*radi;
   near = radi;
   far = 3*radi;
-  angleX=40.0; // Pujem la c‡mera 45 graus respecte l'eix XZ
-  angleY=340.0; // DesplaÁem la camera 45 graus respecte l'eix YZ (315=-45)
+  //Inicialment volem despla√ßar l'escena
+  //amb aquests angles perqu√® √©s com queda b√©. (315=-45)
+  angleX=40.0; 
+  angleY=340.0;
   angleZ=0.0;
   /*
-    Tenint en compte que:
-    Radi = perpendicular a la tangent que passa per l'esfera mÌnima.
-    
-    El sinus de l'angle de la c‡mera, Ès:
-    Sin @ = catet oposat (radi) / hipotenusa (dist‡ncia)
-
-    Llavors, l'angle de la c‡mera, com que estar‡ al revÈs d'aquest
-    c‡lcul, es calcula fent l'arcsinus.
+    Radi √©s perpendicular a la tangent que passa per l'esfera m√≠nima.
+    La tangent d'un angle de la c√†mera, √©s:
+    tan Œ±  = catet oposat (radi) / dist√†ncia 
+    Llavors, necessitem multiplicar-ho per 2.
   */
-  fovy = (float) asin(radi/distancia)*RAD2DEG;
+  fovy = (float) (2*tanf(radi/distancia))*RAD2DEG;
 
   /*Ratio d'aspecte (16:9, 4:3..)
-    width i height Ès la mida del viewport.
+    width i height √©s la mida del viewport.
    */
   ratio = (float) width()/height();
+  
 }
 
 // paintGL() - callback cridat cada cop que cal refrescar la finestra. 
@@ -102,9 +109,20 @@ void GLWidget::paintGL( void )
 }
 
 // resizeGL() - Cridat quan es canvia el tamany del viewport.
-void GLWidget::resizeGL (int width, int height)
+void GLWidget::resizeGL (int w, int h)
 {
-  glViewport (0, 0, width, height);
+  glViewport (0, 0, w, h);
+    
+  //Recalculem objectiu de la c√†mera
+  ratio = (float) w/h;
+
+  if (ratio < 1) //Si w < h
+    {
+      /**A IMPLEMENTAR**/
+      //float temp = fovy*DEG2RAD/2;
+      //fovy = 2*fovy;
+    }
+  // cout << w <<":"<<h<<endl;
   updateGL();
 }
 
@@ -114,7 +132,7 @@ void GLWidget::resizeGL (int width, int height)
 void GLWidget::help( void ){
   cout<<"Tecles definides: \n";
   cout<<"f         Pinta en filferros\n";
-  cout<<"s         Pinta amb omplert de polÌgons\n";
+  cout<<"s         Pinta amb omplert de pol√≠gons\n";
   cout<<"h,H,?     Imprimir aquesta ajuda\n";
   // Completar amb altres tecles que definiu...
   //
@@ -170,8 +188,8 @@ void GLWidget::mousePressEvent( QMouseEvent *e){
 *
 * mouseReleaseEvent()
 *
-* Callback Qt cridat quan es deixa anar el botÛ del
-* ratolÌ.
+* Callback Qt cridat quan es deixa anar el bot√≥ del
+* ratol√≠.
 *
 */
 void GLWidget::mouseReleaseEvent( QMouseEvent *){
@@ -188,12 +206,12 @@ void GLWidget::mouseReleaseEvent( QMouseEvent *){
 */
 void GLWidget::mouseMoveEvent(QMouseEvent *e)
 {
-  // AquÌ cal que es calculi i s'apliqui la rotaciÛ, el zoom o el pan
+  // Aqu√≠ cal que es calculi i s'apliqui la rotaci√≥, el zoom o el pan
   // com s'escaigui...
   
   if (DoingInteractive == ROTATE)
   {
-    // Fem la rotaciÛ
+    // Fem la rotaci√≥
   }
   else if (DoingInteractive == ZOOM)
   {
