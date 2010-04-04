@@ -81,7 +81,7 @@ void GLWidget::computeDefaultCamera()
     Llavors, necessitem trobar l'angle i multiplicar-ho per 2.
   */
   fovy = (float) 2 * atanf(radi/distancia) * RAD2DEG;
-  
+  dynamic_fovy = fovy;
 
   /*Ratio d'aspecte (16:9, 4:3..)
     width i height és la mida del viewport.
@@ -271,6 +271,5 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
 void GLWidget::resetCamera()
 {
   computeDefaultCamera();
-  dynamic_fovy=fovy;
   updateGL();
 }
