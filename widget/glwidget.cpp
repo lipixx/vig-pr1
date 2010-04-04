@@ -282,3 +282,9 @@ void GLWidget::carregaVehicle()
   scene.carregaVehicle(veh);
   updateGL();
 }
+
+void GLWidget::orientaVehicle(int graus)
+{
+  scene.orientaVehicle(graus);
+  updateGL();
+}

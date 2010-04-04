@@ -72,6 +72,6 @@ void Vehicle::Render ()
 	       -(box.maxb.z+box.minb.z)/2.0);
 
   obj.Render();
-  box.Render();
+  //box.Render(); //Debugging
   glPopMatrix();
 }
