@@ -148,17 +148,45 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 {
   switch( e->key() ) 
   {	    
-    case Qt::Key_F: glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  case Qt::Key_F: glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       updateGL();
       break;
-    case Qt::Key_S: glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      updateGL();
-      break;
-    case  'h'  : case  'H'  : case  '?'  :  help();
-      break;
-    default: e->ignore(); // el propaguem cap al pare...
+  case Qt::Key_S: glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    updateGL();
+    break;
+  case  'h'  : case  'H'  : case  '?'  :  help();
+    break;
+  default: e->ignore(); // el propaguem cap al pare...
   }
+  
+}
 
+void GLWidget::wheelEvent(QWheelEvent *e)
+{
+  
+  //Descomentar si volem que s'hagi de pitjar shift per fer zoom
+  //amb la roda.
+  //  if (e->modifiers()&Qt::ShiftModifier)
+    {   
+      //apropa_allunya és un enter + si hem d'apropar, i - si hem
+      //d'allunyar
+      int apropa_allunya = -1*e->delta()/15/8;
+
+      //Factor de zoom de 3.2
+      float factor_zoom = apropa_allunya*3.2;
+
+	if(dynamic_fovy+factor_zoom>0 && dynamic_fovy+factor_zoom<180)
+	{
+	  dynamic_fovy = dynamic_fovy+factor_zoom;
+	  fovy=dynamic_fovy;
+	}
+    }
+
+  e->accept();
+  
+  xClick = e->x();
+  yClick = e->y();
+  updateGL();
 }
 
 /*--------------------
@@ -210,13 +238,13 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
   
   if (DoingInteractive == ROTATE)
     {
-      // Fem la rotació
-      angleX= angleX + (e->y()-yClick)/2;
-      angleY= angleY + (e->x()-xClick)/2;
+      // Fem la rotació, dividim per obtenir més suavitat
+      angleX= angleX + (e->y()-yClick)/2.0;
+      angleY= angleY + (e->x()-xClick)/2.0;
     }
   else if (DoingInteractive == ZOOM)
     {
-      // Fem el zoom
+      // Fem el zoom, dividim per obtenir més suavitat
       if(dynamic_fovy+(e->y()-yClick)/2 >0 
 	 && dynamic_fovy+(e->y()-yClick)/2< 180)
 	{
@@ -229,9 +257,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
       // Fem el pan
       float m[4][4];
       glGetFloatv(GL_MODELVIEW_MATRIX,&m[0][0]);  
-      Point s = Point(m[0][0],m[1][0],m[2][0]) * (xClick - e->x()) * (0.4);
-      Point u = Point(m[0][1],m[1][1],m[2][1]) * (e->y() - yClick) * (0.4);
-      VRP += s + u;
+      Point x_obs = Point(m[0][0],m[1][0],m[2][0]) * (xClick - e->x());
+      Point y_obs = Point(m[0][1],m[1][1],m[2][1]) * (e->y() - yClick);
+      VRP += (x_obs + y_obs) * 0.05; //Multipliquem per obtenir suavitat
     }   
   
   xClick = e->x();
