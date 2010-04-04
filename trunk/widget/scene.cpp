@@ -58,6 +58,10 @@ void Scene::Render()
   for (int i=0; i<num;i++) lreferencies[i].Render(lobjects);
   num = circuit.size();
   for (int i=0; i<num; i++) circuit[i].Render(lobjects);
+
+  if (veh.enabled())
+    
+    veh.Render();
 }
 
 void Scene::AddObject(Object &o)
@@ -101,3 +105,19 @@ void Scene::CalculaEsfera (double &radi, Point &centreEscena)
   radi = (capsaEscena.maxb-capsaEscena.minb).length()/2.f;
 }
 
+void Scene::carregaVehicle(const char* filename)
+{
+  //Llegim el model
+  veh.llegirModel(filename);
+
+  //Obtenim la posició i orientació del tram amb Id 0.
+  Point pos = circuit[0].getPosition();
+  float ori = circuit[0].getOrientation();
+
+  //Movem el vehicle a la posició del tram 0, i el pugem a nivell del terra
+  //El nivell és 0.1, fer: cout << circuit[0].getSize() << endl;
+  //També l'orientem correctament
+  pos.y += 0.1;
+  veh.setPos(pos);
+  veh.setOrientation(180-ori);
+}

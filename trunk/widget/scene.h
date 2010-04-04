@@ -51,7 +51,7 @@ class Scene
   void AddObject(Tram &);
 
   void CalculaEsfera (double &radi, Point &centreEscena);
-
+  void carregaVehicle (const char* filename);
 };
 
 #endif
