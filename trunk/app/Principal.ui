@@ -13,18 +13,16 @@
    <string>Form1</string>
   </property>
   <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>11</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
+   <property name="margin" >
+    <number>11</number>
+   </property>
    <item>
-    <widget class="GLWidget" name="gLWidget1" >
+    <widget class="GLWidget" native="1" name="gLWidget1" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>7</hsizetype>
-       <vsizetype>7</vsizetype>
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -39,11 +37,11 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>11</number>
-     </property>
      <property name="spacing" >
       <number>6</number>
+     </property>
+     <property name="margin" >
+      <number>11</number>
      </property>
      <item>
       <spacer>
@@ -53,7 +51,7 @@
        <property name="sizeType" >
         <enum>QSizePolicy::Expanding</enum>
        </property>
-       <property name="sizeHint" >
+       <property name="sizeHint" stdset="0" >
         <size>
          <width>20</width>
          <height>365</height>
@@ -62,12 +60,19 @@
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>11</number>
+      <widget class="QPushButton" name="resetButton" >
+       <property name="text" >
+        <string>Reset càmera</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="margin" >
+        <number>11</number>
        </property>
        <item>
         <spacer>
@@ -77,7 +82,7 @@
          <property name="sizeType" >
           <enum>QSizePolicy::Fixed</enum>
          </property>
-         <property name="sizeHint" >
+         <property name="sizeHint" stdset="0" >
           <size>
            <width>101</width>
            <height>31</height>
@@ -88,9 +93,7 @@
        <item>
         <widget class="QPushButton" name="pushButton1" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>0</hsizetype>
-           <vsizetype>0</vsizetype>
+          <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -121,6 +124,9 @@
    <class>GLWidget</class>
    <extends>QWidget</extends>
    <header>glwidget.h</header>
+   <slots>
+    <slot>resetCamera()</slot>
+   </slots>
   </customwidget>
  </customwidgets>
  <includes>
@@ -135,12 +141,28 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>671</x>
+     <y>538</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>resetButton</sender>
+   <signal>clicked()</signal>
+   <receiver>gLWidget1</receiver>
+   <slot>resetCamera()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>593</x>
+     <y>477</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>432</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>

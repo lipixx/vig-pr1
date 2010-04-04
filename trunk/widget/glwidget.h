@@ -34,6 +34,7 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
   void help(void);
 
   // Afegiu aquí la declaració dels slots que necessiteu
+  void resetCamera();
 
  protected:
   // initializeGL() - Aqui incluim les inicialitzacions del contexte grafic.
@@ -52,7 +53,7 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
   // mousePressEvent() i mouseReleaseEvent()
   virtual void mousePressEvent( QMouseEvent *e);
   virtual void mouseReleaseEvent( QMouseEvent *);
- 
+  
   // mouseMoveEvent() - Cridat quan s'arrosega el ratoli amb algun botó premut.
   virtual void mouseMoveEvent(QMouseEvent *e);
 
@@ -67,19 +68,16 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
 
  private:
 
-  // interaccio
-  typedef  enum {NONE, ROTATE, ZOOM, PAN} InteractiveAction;
+  typedef enum {NONE, ROTATE, ZOOM, PAN} InteractiveAction;
   InteractiveAction DoingInteractive;
  
-  int   xClick, yClick;
+  int xClick, yClick;
   
-  Scene scene;  // Escena a representar en el widget
-
-  //Atributs meus
+  //Escena a representar en el widget
+  Scene scene;
+  
   //Paràmetres càmera
   GLfloat fovy,dynamic_fovy;
-  //View Reference Point, és de la classe point i representa
-  //un punt a l'espai.
   Point VRP;
   double distancia,radi,near,far;
   float angleX,angleY,angleZ,ratio;
