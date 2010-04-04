@@ -268,3 +268,9 @@ void GLWidget::mouseMoveEvent(QMouseEvent *e)
   updateGL();
 }
 
+void GLWidget::resetCamera()
+{
+  computeDefaultCamera();
+  dynamic_fovy=fovy;
+  updateGL();
+}
