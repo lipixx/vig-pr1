@@ -1,0 +1,17 @@
+NOTA:
+
+- He afegit una funcionalitat extra per fer zoom amb la roda
+del ratolí a l'estil google maps.
+
+- He escrit un document de 21 pàgines que m'agradaria que miressiu.
+Es troba dins el directori documentació.
+Degut a la feina que m'ha portat no trobo necessari fer més comentaris
+en aquest fitxer de text.
+
+Per més info: 
+entreu al directori documentació i obriu el fitxer pdf que hi trobareu.
+
+
+
+Felip Moll Marquès
+Q2 - 2009-2010 - VIG

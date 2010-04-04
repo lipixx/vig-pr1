@@ -121,3 +121,8 @@ void Scene::carregaVehicle(const char* filename)
   veh.setPos(pos);
   veh.setOrientation(180-ori);
 }
+
+void Scene::orientaVehicle(int graus)
+{
+  veh.setOrientation((float)graus);
+}

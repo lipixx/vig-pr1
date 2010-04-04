@@ -52,6 +52,7 @@ class Scene
 
   void CalculaEsfera (double &radi, Point &centreEscena);
   void carregaVehicle (const char* filename);
+  void orientaVehicle (int graus);
 };
 
 #endif
