@@ -55,6 +55,9 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
  
   // mouseMoveEvent() - Cridat quan s'arrosega el ratoli amb algun botó premut.
   virtual void mouseMoveEvent(QMouseEvent *e);
+
+  //Implementem zoom amb la roda del ratolí
+  virtual void wheelEvent(QWheelEvent *e);
  
   void computeDefaultCamera(); 
 
