@@ -60,9 +60,24 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="carregaVeh" >
+       <property name="text" >
+        <string>Carregar vehicle</string>
+       </property>
+       <property name="icon" >
+        <iconset>
+         <normaloff>../data/icons/car_icon.gif</normaloff>../data/icons/car_icon.gif</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="resetButton" >
        <property name="text" >
         <string>Reset càmera</string>
+       </property>
+       <property name="icon" >
+        <iconset>
+         <normaloff>../data/icons/camera_icon.gif</normaloff>../data/icons/camera_icon.gif</iconset>
        </property>
       </widget>
      </item>
@@ -126,6 +141,7 @@
    <header>glwidget.h</header>
    <slots>
     <slot>resetCamera()</slot>
+    <slot>carregaVehicle()</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -163,6 +179,22 @@
     <hint type="destinationlabel" >
      <x>432</x>
      <y>370</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>carregaVeh</sender>
+   <signal>clicked()</signal>
+   <receiver>gLWidget1</receiver>
+   <slot>carregaVehicle()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>701</x>
+     <y>444</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>487</x>
+     <y>351</y>
     </hint>
    </hints>
   </connection>

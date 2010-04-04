@@ -35,6 +35,8 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
 
   // Afegiu aquí la declaració dels slots que necessiteu
   void resetCamera();
+  void carregaVehicle();
+  
 
  protected:
   // initializeGL() - Aqui incluim les inicialitzacions del contexte grafic.

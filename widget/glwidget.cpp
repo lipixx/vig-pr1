@@ -273,3 +273,12 @@ void GLWidget::resetCamera()
   computeDefaultCamera();
   updateGL();
 }
+
+void GLWidget::carregaVehicle()
+{  
+  QString fitxer = QFileDialog::getOpenFileName(this, tr("Carregar vehicle"),"../data",tr("Objectes (*.obj)"));
+  const char *veh = (fitxer.toStdString()).c_str();  
+  cout << "Carregem vehicle: "<< veh << endl;
+  scene.carregaVehicle(veh);
+  updateGL();
+}
