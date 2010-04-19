@@ -119,10 +119,24 @@ void Scene::carregaVehicle(const char* filename)
   //També l'orientem correctament
   pos.y += 0.1;
   veh.setPos(pos);
+  veh.setTramI(0);
   veh.setOrientation(180-ori);
 }
 
 void Scene::orientaVehicle(int graus)
 {
   veh.setOrientation((float)graus);
+}
+
+void Scene::mouVehicle()
+{
+  int ti; //Tram Index en el que es troba el vehicle
+  Point tp; //Posició d'aquest tram
+  Point vp; //Posició actual del vehicle
+
+  ti = veh.getTramI();
+  tp = circuit[ti].getPosition();
+  vp = veh.getPos();  
+
+  veh.setPos(vp+Point(1,0,0));
 }

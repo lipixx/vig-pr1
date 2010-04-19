@@ -12,6 +12,7 @@ class Vehicle
   Point pos;         // posici� del centre de la base del vehicle
   double escalat;    // escalat (homogeni) que cal aplicar-li en pintar-lo
   float orient;        // orientaci� (en graus) respecte l'eix Y
+  int indexTram;
 
   //Ens indica si hem carregat el vehicle
   bool veh_carregat;
@@ -25,7 +26,11 @@ public:
   // assigna la posici� del vehicle
   void setPos (Point);
   Point getPos();
- 
+
+  //assigna el tram en el que es troba el vehicle
+  void setTramI (int);
+  int getTramI();
+
   // assigna l'orientaci� del vehicle
   void setOrientation (float);
   float getOrientation();

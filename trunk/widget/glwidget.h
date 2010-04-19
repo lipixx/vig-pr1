@@ -38,6 +38,9 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
   void carregaVehicle();
   void orientaVehicle(int);
 
+  private slots:
+    void timerHandler();
+
  protected:
   // initializeGL() - Aqui incluim les inicialitzacions del contexte grafic.
   virtual void initializeGL();
@@ -83,6 +86,9 @@ class QDESIGNER_WIDGET_EXPORT GLWidget : public QGLWidget
   Point VRP;
   double distancia,radi,near,far;
   float angleX,angleY,angleZ,ratio;
+  
+  //Timer
+  QTimer * timer;
   
 };
 
