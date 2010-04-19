@@ -24,6 +24,16 @@ void Vehicle::llegirModel (const char* filename)
    veh_carregat = TRUE;
 }
 
+void Vehicle::setTramI (int nouTramI)
+{
+  indexTram  = nouTramI;
+}
+
+int Vehicle::getTramI()
+{
+  return indexTram;
+}
+
 void Vehicle::setPos (Point p)
 {
   pos=p;

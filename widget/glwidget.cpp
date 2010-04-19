@@ -9,10 +9,17 @@ GLWidget::GLWidget(QWidget * parent):QGLWidget(parent)
 {
   // per rebre events de teclat
   setFocusPolicy(Qt::ClickFocus);
-  
+  timer = new QTimer(this);
+  connect(timer,SIGNAL(timeout()), this, SLOT(timerHandler()));
+  //timer->start(0); //0ms Single-shot timer
   DoingInteractive = NONE;  
 }
 
+void GLWidget::timerHandler()
+{
+  scene.mouVehicle();
+  updateGL();
+}
 
 // initializeGL() - Aqui incluim les inicialitzacions del contexte grafic.
 void GLWidget::initializeGL()
@@ -280,6 +287,7 @@ void GLWidget::carregaVehicle()
   const char *veh = (fitxer.toStdString()).c_str();  
   cout << "Carregem vehicle: "<< veh << endl;
   scene.carregaVehicle(veh);
+  timer->start(400); //Començar el moviment del vehicle
   updateGL();
 }
 
