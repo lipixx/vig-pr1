@@ -1,6 +1,8 @@
 #ifndef _Tram_H_
 #define _Tram_H_
 #include "referencia.h"
+#include <cstdlib>
+#include <ctime>
 
 #define XPOS 0
 #define XNEG 1
@@ -23,6 +25,8 @@ class Tram:public Referencia
   ~Tram(void);
    
    void setSeg(int a, int b=-1, int c=-1);
+   int getSeg(int direccio);
+   int seguentDireccio();
 
 };
 #endif

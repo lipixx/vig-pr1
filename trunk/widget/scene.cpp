@@ -130,13 +130,131 @@ void Scene::orientaVehicle(int graus)
 
 void Scene::mouVehicle()
 {
-  int ti; //Tram Index en el que es troba el vehicle
-  Point tp; //Posició d'aquest tram
-  Point vp; //Posició actual del vehicle
+  Point veh_pos; //Posició actual del vehicle
+  Point mov,tmp;
+  int seguent_tram;
+  int seg_direccio;
+  double xmov,zmov;
 
-  ti = veh.getTramI();
-  tp = circuit[ti].getPosition();
-  vp = veh.getPos();  
+  tmp = veh.getMov();
+  
+  xmov = tmp.x;
+  zmov = tmp.z;
+  
+  veh_pos = veh.getPos();
+  mov = Point(xmov,0,zmov);
 
-  veh.setPos(vp+Point(1,0,0));
+  //Movem el vehicle
+  veh_pos += mov;
+  veh.setPos(veh_pos);
+
+  if (veh.getGirant())
+    {
+      float v_ori,t_ori;
+      v_ori = veh.getOrientation();
+      t_ori = circuit[veh.getTramI()].getOrientation();
+      if (v_ori < t_ori)
+	veh.setOrientation(v_ori+20);
+      else
+	veh.setOrientation(v_ori-20);
+    }
+
+  //En el seguent moviment, on estarem?
+  seguent_tram = vehInTram(veh_pos,veh.getTramI());
+
+  //Si estic al mateix tram, no fer res
+  //si estic a un tram nou, identificar en quin,
+  //actualitzant veh.indexTram.
+  //Decidir un nou sentit de moviment en funció
+  //d'aquest (veh xmov,zmov).
+  if (seguent_tram != veh.getTramI())
+    {
+      veh.setTramI(seguent_tram);
+      
+      seg_direccio = circuit[seguent_tram].seguentDireccio();
+      
+      switch (seg_direccio)
+	{
+	case XPOS:
+	  if (xmov != VELOCITAT)
+	    {
+	      xmov = VELOCITAT;
+	      zmov = 0;
+	      veh.setGirant(true);
+	    }
+	  break;
+	case XNEG:
+	  if (xmov != -VELOCITAT)
+	    {
+	      xmov = -VELOCITAT;
+	      zmov = 0;
+	      veh.setGirant(true);
+	    }
+	  break;
+	case ZPOS:
+	  if (zmov != -VELOCITAT)
+	    {    
+	      xmov = 0;
+	      zmov = VELOCITAT;
+	      veh.setGirant(true);
+	    }
+	  break;
+	case ZNEG:
+	  if (zmov != -VELOCITAT)
+	    {
+	      xmov = 0;
+	      zmov = -VELOCITAT;
+	      veh.setGirant(true);
+	    }
+	  break;
+        default:
+	  break;
+	}
+      veh.setMov(xmov,zmov);
+    }
+}
+
+int Scene::vehInTram(Point veh_pos,int index_tram)
+{
+  double sx,sz,snx,snz;
+  Point vmov,ptram;
+  
+  ptram = circuit[index_tram].getPosition();
+
+  //Mirem si estem a dins del ptram (de mida 1)
+  sx = ptram.x + 1;
+  sz = ptram.z + 1;
+  snx = ptram.x - 1;
+  snz = ptram.z - 1;
+
+  if (veh_pos.x > sx || veh_pos.x < snx ||
+      veh_pos.z > sz || veh_pos.z < snz)
+    {
+      //Hem caigut fora de del tram
+
+      //Cap on anavem?
+      vmov = veh.getMov();
+
+      if (vmov.x > 0)
+	{
+	  //Ens moviem en l'eix x +
+	  return circuit[index_tram].getSeg(XPOS);
+	}
+      if (vmov.z > 0)
+	{
+	  //Ens moviem en l'eix z +
+	  return circuit[index_tram].getSeg(ZPOS);
+	}
+      if (vmov.x < 0)
+	{
+	  //Ens moviem en l'eix x -
+	  return circuit[index_tram].getSeg(XNEG);
+	}
+      if (vmov.z < 0)
+	{
+	  //Ens moviem en l'eix z -
+	  return circuit[index_tram].getSeg(ZNEG);
+	}
+    }
+  return index_tram;
 }

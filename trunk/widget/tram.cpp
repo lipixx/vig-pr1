@@ -12,6 +12,21 @@ Tram::Tram(int idob, Point p, Vector sz, int ori):Referencia(idob, p, sz, ori)
 Tram::~Tram(void)
 {}
 
+int Tram::seguentDireccio()
+{
+  srand((unsigned)time(0));  
+  int random = rand() % (ZNEG + 1);
+
+  while (seguents[random] == -1)
+    random = (random + 1) % 4;
+
+  return random;
+}
+
+int Tram::getSeg(int direccio)
+{
+  return seguents[direccio];
+}
 
 void Tram::tractaRecta(int a)
 {
