@@ -6,6 +6,7 @@
 #include "tram.h"
 #include <QtOpenGL/qgl.h>
 
+#define VELOCITAT 0.05
 
 class Scene
 {
@@ -54,6 +55,10 @@ class Scene
   void carregaVehicle (const char* filename);
   void orientaVehicle (int graus);
   void mouVehicle ();
+
+ private:
+  int vehInTram(Point veh_pos,int index_tram);
+
 };
 
 #endif

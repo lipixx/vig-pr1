@@ -32,9 +32,24 @@ void Vehicle::llegirModel (const char* filename)
    //mirant el fitxer scene.xml: (1,0.1,1). Ens interessa
    //la mida de X i de Y que defineix el quadrat. És 1.0.
    escalat = 1.0/(2.0*max)*1.0;
-
    orient = 0.0;
+   
+   //Moviment, començem al tram 0 que va cap a les X.
+   xmov = VELOCITAT;
+   zmov = 0;
+   girant = false;
+
    veh_carregat = TRUE;
+}
+
+bool Vehicle::getGirant()
+{
+  return girant;
+}
+
+void Vehicle::setGirant(bool b)
+{
+  girant = b;
 }
 
 void Vehicle::setTramI (int nouTramI)
@@ -45,6 +60,17 @@ void Vehicle::setTramI (int nouTramI)
 int Vehicle::getTramI()
 {
   return indexTram;
+}
+
+void Vehicle::setMov(double nxmov,double nzmov)
+{
+  xmov = nxmov;
+  zmov = nzmov;
+}
+
+Point Vehicle::getMov()
+{
+  return Point(xmov,0,zmov);
 }
 
 void Vehicle::setPos (Point p)
