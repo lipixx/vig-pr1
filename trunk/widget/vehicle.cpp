@@ -16,10 +16,23 @@ void Vehicle::llegirModel (const char* filename)
    obj.readObj(filename, Scene::matlib);
    obj.updateBoundingBox();
    Box box=obj.boundingBox();
+   float sx = box.maxb.x - box.minb.x;
+   float sy = box.maxb.y - box.minb.y;
+   float sz = box.maxb.z - box.minb.z;
+   float max;
 
+   max = sz;
+   if (max < sy) max = sy;
+   if (max < sx) max = sx;
+     
    // Aqui cal que inicialitzeu correctament la resta d'atributs del vehicle
    Point pos(0,0,0);
-   escalat = 1.0;
+
+   //Ha de ser la meitat de la mida d'un tram
+   //mirant el fitxer scene.xml: (1,0.1,1). Ens interessa
+   //la mida de X i de Y que defineix el quadrat. És 1.0.
+   escalat = 1.0/(2.0*max)*1.0;
+
    orient = 0.0;
    veh_carregat = TRUE;
 }
