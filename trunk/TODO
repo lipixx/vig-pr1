@@ -1,0 +1,16 @@
+Recursos)
+/assig/vig/sessions/S2.2/CalculaNormals.codi :
+
+És el codi que calcula la normal de totes les cares de l'objecte. Hem de posar-lo a Object.
+
+/assig/vig/sessions/S2.2/ComputeNormal.codi :
+
+És el codi que fa servir CalculaNormals.codi, l'hem de col·locar on toqui.
+
+uiLlums_qt4:
+
+Conté un widget en qt per triar el color dels llums, etc.ç
+
+1a Sessió)
+
+1. Implementar moviment vehicle.
