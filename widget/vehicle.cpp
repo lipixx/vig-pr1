@@ -35,10 +35,10 @@ void Vehicle::llegirModel (const char* filename)
    orient = 0.0;
    
    //Moviment, començem al tram 0 que va cap a les X.
-   xmov = VELOCITAT;
-   zmov = 0;
+   velocitat = 3.5/(float)1000;
+   ori_objectiu = 0.0;
    girant = false;
-
+   angle_gir = 0;
    veh_carregat = TRUE;
 }
 
@@ -52,6 +52,17 @@ void Vehicle::setGirant(bool b)
   girant = b;
 }
 
+float Vehicle::getVelocitat()
+{
+  return velocitat;
+}
+
+void Vehicle::setVelocitat(float v)
+{
+  velocitat = v/(float)1000;
+}
+
+
 void Vehicle::setTramI (int nouTramI)
 {
   indexTram  = nouTramI;
@@ -62,15 +73,14 @@ int Vehicle::getTramI()
   return indexTram;
 }
 
-void Vehicle::setMov(double nxmov,double nzmov)
+void Vehicle::setOriObj(float ori)
 {
-  xmov = nxmov;
-  zmov = nzmov;
+  ori_objectiu = ori;
 }
 
-Point Vehicle::getMov()
+float Vehicle::getOriObj()
 {
-  return Point(xmov,0,zmov);
+  return ori_objectiu;
 }
 
 void Vehicle::setPos (Point p)

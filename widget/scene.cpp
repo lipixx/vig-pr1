@@ -2,6 +2,7 @@
 #include "XML.h"
 #include <math.h>
 
+
 int Scene::DRETA=0;
 int Scene::ESQUERRA=1;
 int Scene::RECTA=2;
@@ -133,35 +134,33 @@ void Scene::mouVehicle()
   Point veh_pos; //Posició actual del vehicle
   Point mov,tmp;
   int seguent_tram;
-  int seg_direccio;
-  double xmov,zmov;
 
-  tmp = veh.getMov();
-  
-  xmov = tmp.x;
-  zmov = tmp.z;
-  
+  float v_ori;
+  v_ori = veh.getOrientation();
   veh_pos = veh.getPos();
-  mov = Point(xmov,0,zmov);
 
-  //Movem el vehicle
-  veh_pos += mov;
-  veh.setPos(veh_pos);
-
-  if (veh.getGirant())
+  if (!veh.getGirant())
     {
-      float v_ori,t_ori;
-      v_ori = veh.getOrientation();
-      t_ori = circuit[veh.getTramI()].getOrientation();
-      if (v_ori < t_ori)
-	veh.setOrientation(v_ori+20);
-      else
-	veh.setOrientation(v_ori-20);
+      mov = getNextMov(v_ori);
+      veh.setPos(mov+veh_pos);
+    }
+  else
+    {
+      veh.angle_gir += (float)90 / (float)RESOLUCIO_MOVIMENT;
+      float radi_gir = 0.5; //Cotxe sempre enmig de la carretera
+      veh.setPos(
+		 (Point)
+		 (radi_gir * cos(veh.angle_gir*DEG2RAD),
+		  0,
+		  radi_gir * sin(veh.angle_gir*DEG2RAD)
+		  )
+		 );
+      if (veh.getOriObj() == veh.getOrientation()) veh.setGirant(false);
     }
 
   //En el seguent moviment, on estarem?
   seguent_tram = vehInTram(veh_pos,veh.getTramI());
-
+ 
   //Si estic al mateix tram, no fer res
   //si estic a un tram nou, identificar en quin,
   //actualitzant veh.indexTram.
@@ -171,90 +170,82 @@ void Scene::mouVehicle()
     {
       veh.setTramI(seguent_tram);
       
-      seg_direccio = circuit[seguent_tram].seguentDireccio();
-      
-      switch (seg_direccio)
+      if (v_ori != circuit[seguent_tram].getOrientation())
 	{
-	case XPOS:
-	  if (xmov != VELOCITAT)
+	  cout << v_ori << circuit[seguent_tram].getOrientation() << endl;
+	  //Haurem d'iniciar sa giravoga
+	  veh.setGirant(true);
+
+	  //Si el tram és multiopció, en triem una aleatòria i assignem
+	  //la orientacio objectiu final que ha de conseguir el cotxe
+	  //quan hagi acabat de girar  
+	  switch (circuit[seguent_tram].seguentDireccio())
 	    {
-	      xmov = VELOCITAT;
-	      zmov = 0;
-	      veh.setGirant(true);
+	    case XPOS:
+	      veh.setOriObj((float)0);
+	      break;
+	    case XNEG:
+	      veh.setOriObj((float)180);
+	      break;
+	    case ZPOS:
+	      veh.setOriObj((float)90);
+	      break;
+	    case ZNEG:
+	      veh.setOriObj((float)270);
+	      break;
+	    default:
+	      break;
 	    }
-	  break;
-	case XNEG:
-	  if (xmov != -VELOCITAT)
-	    {
-	      xmov = -VELOCITAT;
-	      zmov = 0;
-	      veh.setGirant(true);
-	    }
-	  break;
-	case ZPOS:
-	  if (zmov != -VELOCITAT)
-	    {    
-	      xmov = 0;
-	      zmov = VELOCITAT;
-	      veh.setGirant(true);
-	    }
-	  break;
-	case ZNEG:
-	  if (zmov != -VELOCITAT)
-	    {
-	      xmov = 0;
-	      zmov = -VELOCITAT;
-	      veh.setGirant(true);
-	    }
-	  break;
-        default:
-	  break;
 	}
-      veh.setMov(xmov,zmov);
     }
+}
+
+Point Scene::getNextMov(float v_ori)
+{
+  Point mov;
+  float vel = veh.getVelocitat();
+
+  mov.x = 0;
+  mov.y = 0;
+  mov.z = 0;
+
+  if (v_ori == 0) { mov.x = vel; mov.z = 0; }
+  if (v_ori == 90) { mov.x = 0;  mov.z = vel; }
+  if (v_ori == 180) { mov.x = -vel; mov.z = 0; }
+  if (v_ori == 270) { mov.x = 0; mov.z = -vel; }
+
+  return mov;
 }
 
 int Scene::vehInTram(Point veh_pos,int index_tram)
 {
   double sx,sz,snx,snz;
-  Point vmov,ptram;
-  
+  Point ptram;
+  float last_ori;
+
   ptram = circuit[index_tram].getPosition();
 
   //Mirem si estem a dins del ptram (de mida 1)
-  sx = ptram.x + 1;
-  sz = ptram.z + 1;
-  snx = ptram.x - 1;
-  snz = ptram.z - 1;
+  sx = ptram.x + 0.5;
+  sz = ptram.z + 0.5;
+  snx = ptram.x - 0.5;
+  snz = ptram.z - 0.5;
 
   if (veh_pos.x > sx || veh_pos.x < snx ||
       veh_pos.z > sz || veh_pos.z < snz)
     {
       //Hem caigut fora de del tram
-
       //Cap on anavem?
-      vmov = veh.getMov();
+      last_ori = veh.getOriObj();
 
-      if (vmov.x > 0)
-	{
-	  //Ens moviem en l'eix x +
-	  return circuit[index_tram].getSeg(XPOS);
-	}
-      if (vmov.z > 0)
-	{
-	  //Ens moviem en l'eix z +
-	  return circuit[index_tram].getSeg(ZPOS);
-	}
-      if (vmov.x < 0)
-	{
-	  //Ens moviem en l'eix x -
-	  return circuit[index_tram].getSeg(XNEG);
-	}
-      if (vmov.z < 0)
-	{
-	  //Ens moviem en l'eix z -
-	  return circuit[index_tram].getSeg(ZNEG);
-	}
+      //Ens moviem en l'eix x +
+      if (last_ori == 0)   { return circuit[index_tram].getSeg(XPOS); }
+      //Ens moviem en l'eix z +
+      if (last_ori == 90)  { return circuit[index_tram].getSeg(ZPOS); }
+      //Ens moviem en l'eix x -      
+      if (last_ori == 180) { return circuit[index_tram].getSeg(XNEG); }
+      //Ens moviem en l'eix z -
+      if (last_ori == 270) { return circuit[index_tram].getSeg(ZNEG); } 
     }
   return index_tram;
 }

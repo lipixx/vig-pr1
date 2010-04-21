@@ -287,7 +287,7 @@ void GLWidget::carregaVehicle()
   const char *veh = (fitxer.toStdString()).c_str();  
   cout << "Carregem vehicle: "<< veh << endl;
   scene.carregaVehicle(veh);
-  timer->start(5); //Començar el moviment del vehicle
+  timer->start(RESOLUCIO_MOVIMENT); //Començar el moviment del vehicle
   updateGL();
 }
 
