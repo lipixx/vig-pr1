@@ -10,7 +10,8 @@
 #define PI 3.1415926535898
 #define RAD2DEG 180/PI
 #define DEG2RAD PI/180
-#define RESOLUCIO_MOVIMENT 4 //En milisegons
+#define RESOLUCIO_MOVIMENT 4.0 //En milisegons
+#define ANGLE_GIR 90.0 / 4.0
 
 class Scene
 {
@@ -61,7 +62,7 @@ class Scene
   void mouVehicle ();
 
  private:
-  int vehInTram(Point veh_pos,int index_tram);
+  float vehInTram(Point veh_pos,int index_tram);
   Point getNextMov(float);
 
 };

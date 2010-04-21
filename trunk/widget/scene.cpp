@@ -121,7 +121,11 @@ void Scene::carregaVehicle(const char* filename)
   pos.y += 0.1;
   veh.setPos(pos);
   veh.setTramI(0);
-  veh.setOrientation(180-ori);
+  veh.setVelocitat(2.5);
+  veh.setOrientation(ori);
+  veh.setGirant(false);
+  veh.setDireccio((float)ori);
+  veh.setDireccioRealitzat(ori);
 }
 
 void Scene::orientaVehicle(int graus)
@@ -131,12 +135,12 @@ void Scene::orientaVehicle(int graus)
 
 void Scene::mouVehicle()
 {
-  Point veh_pos; //Posició actual del vehicle
-  Point mov,tmp;
+  Point veh_pos,mov;
   int seguent_tram;
-
   float v_ori;
-  v_ori = veh.getOrientation();
+
+  v_ori = veh.getDireccio();
+
   veh_pos = veh.getPos();
 
   if (!veh.getGirant())
@@ -146,21 +150,27 @@ void Scene::mouVehicle()
     }
   else
     {
-      veh.angle_gir += (float)90 / (float)RESOLUCIO_MOVIMENT;
-      float radi_gir = 0.5; //Cotxe sempre enmig de la carretera
-      veh.setPos(
-		 (Point)
-		 (radi_gir * cos(veh.angle_gir*DEG2RAD),
-		  0,
-		  radi_gir * sin(veh.angle_gir*DEG2RAD)
-		  )
-		 );
-      if (veh.getOriObj() == veh.getOrientation()) veh.setGirant(false);
+      /* double radi_gir = 0.5;
+
+	  double xpos =  (radi_gir * cos(ANGLE_GIR*DEG2RAD)) + veh_pos.x;
+	  double zpos =  (radi_gir * sin(ANGLE_GIR*DEG2RAD)) + veh_pos.z;
+	  
+	  veh.setPos((Point)(xpos,0.1,zpos));
+
+	  veh.addDireccioRealitzat(ANGLE_GIR);
+      */
+      mov = getNextMov(veh.getDireccio());
+      veh.setPos(mov+veh_pos);
+      veh.setDireccioRealitzat((float) 4);
     }
 
+ if (veh.getDireccio() == veh.getDireccioRealitzat())
+   veh.setGirant(false);
+    
+
   //En el seguent moviment, on estarem?
-  seguent_tram = vehInTram(veh_pos,veh.getTramI());
- 
+  seguent_tram = vehInTram(veh.getPos(),veh.getTramI());
+  
   //Si estic al mateix tram, no fer res
   //si estic a un tram nou, identificar en quin,
   //actualitzant veh.indexTram.
@@ -169,33 +179,39 @@ void Scene::mouVehicle()
   if (seguent_tram != veh.getTramI())
     {
       veh.setTramI(seguent_tram);
+
+      //Hem de veure on ens portarà aquest tram, per veure si s'ha 
+      //de fer gir o no
+      int dir = circuit[seguent_tram].seguentDireccio();
       
-      if (v_ori != circuit[seguent_tram].getOrientation())
+      switch (dir)
 	{
-	  cout << v_ori << circuit[seguent_tram].getOrientation() << endl;
+	case XPOS:
+	  dir = 180;
+	  break;
+	case ZPOS:
+	  dir = 90;
+	  break;
+	case XNEG:
+	  dir = 0;
+	  break;
+	case ZNEG:
+	  dir = 270;
+	  break;
+	default:
+	  break;
+	}
+
+      if (veh.getDireccio() != dir)
+	{
 	  //Haurem d'iniciar sa giravoga
 	  veh.setGirant(true);
+	  
+	  //I a partir d'ara ens dirigirem cap aquí
+	  veh.setDireccio((float)dir);
 
-	  //Si el tram és multiopció, en triem una aleatòria i assignem
-	  //la orientacio objectiu final que ha de conseguir el cotxe
-	  //quan hagi acabat de girar  
-	  switch (circuit[seguent_tram].seguentDireccio())
-	    {
-	    case XPOS:
-	      veh.setOriObj((float)0);
-	      break;
-	    case XNEG:
-	      veh.setOriObj((float)180);
-	      break;
-	    case ZPOS:
-	      veh.setOriObj((float)90);
-	      break;
-	    case ZNEG:
-	      veh.setOriObj((float)270);
-	      break;
-	    default:
-	      break;
-	    }
+	  //Girarem a poc a poc
+	  veh.setDireccioRealitzat(dir - 90);
 	}
     }
 }
@@ -209,21 +225,24 @@ Point Scene::getNextMov(float v_ori)
   mov.y = 0;
   mov.z = 0;
 
-  if (v_ori == 0) { mov.x = vel; mov.z = 0; }
+  if (v_ori == 180) { mov.x = vel; mov.z = 0; }
   if (v_ori == 90) { mov.x = 0;  mov.z = vel; }
-  if (v_ori == 180) { mov.x = -vel; mov.z = 0; }
+  if (v_ori == 0) { mov.x = -vel; mov.z = 0; }
   if (v_ori == 270) { mov.x = 0; mov.z = -vel; }
 
   return mov;
 }
 
-int Scene::vehInTram(Point veh_pos,int index_tram)
+float Scene::vehInTram(Point veh_pos,int index_tram_anterior)
 {
+  //Aquesta funció retorna la direccio cap on ha d'anar el vehicle
+  //a partir d'aquest tram.
+
   double sx,sz,snx,snz;
   Point ptram;
-  float last_ori;
+  // float angle_direccio;
 
-  ptram = circuit[index_tram].getPosition();
+  ptram = circuit[index_tram_anterior].getPosition();
 
   //Mirem si estem a dins del ptram (de mida 1)
   sx = ptram.x + 0.5;
@@ -235,17 +254,17 @@ int Scene::vehInTram(Point veh_pos,int index_tram)
       veh_pos.z > sz || veh_pos.z < snz)
     {
       //Hem caigut fora de del tram
-      //Cap on anavem?
-      last_ori = veh.getOriObj();
-
-      //Ens moviem en l'eix x +
-      if (last_ori == 0)   { return circuit[index_tram].getSeg(XPOS); }
-      //Ens moviem en l'eix z +
-      if (last_ori == 90)  { return circuit[index_tram].getSeg(ZPOS); }
-      //Ens moviem en l'eix x -      
-      if (last_ori == 180) { return circuit[index_tram].getSeg(XNEG); }
       //Ens moviem en l'eix z -
-      if (last_ori == 270) { return circuit[index_tram].getSeg(ZNEG); } 
+
+      if (veh.getDireccio() == 180)
+	return circuit[index_tram_anterior].getSeg(XPOS);
+      if (veh.getDireccio() == 0)
+	return circuit[index_tram_anterior].getSeg(XNEG);
+      if (veh.getDireccio() == 90)
+	return circuit[index_tram_anterior].getSeg(ZPOS);
+      if (veh.getDireccio() == 270)
+	return circuit[index_tram_anterior].getSeg(ZNEG);
     }
-  return index_tram;
+  
+  return index_tram_anterior;
 }
