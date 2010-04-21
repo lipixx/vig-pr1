@@ -6,7 +6,11 @@
 #include "tram.h"
 #include <QtOpenGL/qgl.h>
 
-#define VELOCITAT 0.05
+#include <cmath>
+#define PI 3.1415926535898
+#define RAD2DEG 180/PI
+#define DEG2RAD PI/180
+#define RESOLUCIO_MOVIMENT 4 //En milisegons
 
 class Scene
 {
@@ -58,6 +62,7 @@ class Scene
 
  private:
   int vehInTram(Point veh_pos,int index_tram);
+  Point getNextMov(float);
 
 };
 
