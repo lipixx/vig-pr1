@@ -121,7 +121,7 @@ void Scene::carregaVehicle(const char* filename)
   pos.y += 0.1;
   veh.setPos(pos);
   veh.setTramI(0);
-  veh.setVelocitat(2.5);
+  veh.setVelocitat(1.5);
   veh.setOrientation(ori);
   veh.setGirant(false);
   veh.setDireccio((float)ori);
@@ -135,6 +135,7 @@ void Scene::orientaVehicle(int graus)
 
 void Scene::mouVehicle()
 {
+
   Point veh_pos,mov;
   int seguent_tram;
   float v_ori;
@@ -150,18 +151,40 @@ void Scene::mouVehicle()
     }
   else
     {
-      /* double radi_gir = 0.5;
+      
 
-	  double xpos =  (radi_gir * cos(ANGLE_GIR*DEG2RAD)) + veh_pos.x;
-	  double zpos =  (radi_gir * sin(ANGLE_GIR*DEG2RAD)) + veh_pos.z;
-	  
-	  veh.setPos((Point)(xpos,0.1,zpos));
+      //Hem de veure cap on girar, si dreta, esquerra dalt o baix.
+     
+      float heading_tram = circuit[veh.getTramI()].getOrientation();
+      float desti_veh = veh.getDireccio(); 
 
-	  veh.addDireccioRealitzat(ANGLE_GIR);
-      */
-      mov = getNextMov(veh.getDireccio());
-      veh.setPos(mov+veh_pos);
-      veh.setDireccioRealitzat((float) 4);
+      Point mov_incr;
+      mov.x = 0;
+      mov.y = 0;
+      mov.z = 0;
+      float tmp2, radi_gir = 0.5;
+
+      switch ((int)heading_tram)
+	{
+	case 180:
+	  switch ((int) desti_veh)
+	    {
+	    case 90:
+	      tmp2 = veh.getDireccio() - veh.getDireccioRealitzat(); 
+	      cout << tmp2 << endl;
+	      mov.x = (radi_gir * cos((ANGLE_GIR)*DEG2RAD))/tmp2;	      
+	      mov.z = (radi_gir * sin((ANGLE_GIR)*DEG2RAD)/tmp2);
+	      break;
+	    default:
+	      break;
+	    }
+	  break;
+	default:
+	  break;
+	}
+      
+      veh.setPos(veh_pos+mov);
+      veh.addDireccioRealitzat(ANGLE_GIR);      
     }
 
  if (veh.getDireccio() == veh.getDireccioRealitzat())
@@ -238,7 +261,7 @@ float Scene::vehInTram(Point veh_pos,int index_tram_anterior)
   //Aquesta funció retorna la direccio cap on ha d'anar el vehicle
   //a partir d'aquest tram.
 
-  double sx,sz,snx,snz;
+  float sx,sz,snx,snz;
   Point ptram;
   // float angle_direccio;
 
