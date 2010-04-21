@@ -15,7 +15,7 @@ Tram::~Tram(void)
 int Tram::seguentDireccio()
 {
   srand((unsigned)time(0));  
-  int random = rand() % (ZNEG + 1);
+  uint random = rand() % 4;
 
   while (seguents[random] == -1)
     random = (random + 1) % 4;

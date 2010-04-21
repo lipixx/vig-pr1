@@ -15,10 +15,10 @@ class Vehicle
   
   //Moviment
   int indexTram;
-  float ori_objectiu;
   bool girant;
   float velocitat;
-
+  
+  
   //Ens indica si hem carregat el vehicle
   bool veh_carregat;
 
@@ -26,7 +26,8 @@ public:
   Vehicle();
 
   //FIXME
-  float angle_gir;
+  float angle_direccio;
+  float angle_direccio_realitzat;
 
   // carrega l'objecte
   void llegirModel (const char* filename); 
@@ -39,10 +40,6 @@ public:
   void setTramI (int);
   int getTramI();
   
-  //Assigna la nova orientació objectiu del vehicle
-  void setOriObj(float);
-  float getOriObj();
-
   //Assigna el nou sentit de moviment del vehicle
   void setVelocitat(float v);
   float getVelocitat();
@@ -54,9 +51,15 @@ public:
   //Girant?
   void setGirant(bool);
   bool getGirant();
+  
+  //Heading!
+  void setDireccio(float);
+  void setDireccioRealitzat(float);
+  float getDireccio();
+  float getDireccioRealitzat();
+  void addDireccioRealitzat(float);
 
   void Render ();
-
   bool enabled();
 };
 

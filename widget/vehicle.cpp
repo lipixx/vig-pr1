@@ -32,14 +32,33 @@ void Vehicle::llegirModel (const char* filename)
    //mirant el fitxer scene.xml: (1,0.1,1). Ens interessa
    //la mida de X i de Y que defineix el quadrat. És 1.0.
    escalat = 1.0/(2.0*max)*1.0;
-   orient = 0.0;
-   
-   //Moviment, començem al tram 0 que va cap a les X.
-   velocitat = 3.5/(float)1000;
-   ori_objectiu = 0.0;
-   girant = false;
-   angle_gir = 0;
+
    veh_carregat = TRUE;
+}
+
+void Vehicle::setDireccio(float angledireccio)
+{
+  angle_direccio = angledireccio;
+}
+
+float Vehicle::getDireccio()
+{
+  return angle_direccio;
+}
+
+void Vehicle::setDireccioRealitzat(float angledireccio)
+{
+  angle_direccio_realitzat = angledireccio;
+}
+
+void Vehicle::addDireccioRealitzat(float angledireccio)
+{
+  angle_direccio_realitzat += angledireccio;
+}
+
+float Vehicle::getDireccioRealitzat()
+{
+  return angle_direccio_realitzat;
 }
 
 bool Vehicle::getGirant()
@@ -59,7 +78,7 @@ float Vehicle::getVelocitat()
 
 void Vehicle::setVelocitat(float v)
 {
-  velocitat = v/(float)1000;
+  velocitat = v/(float)100;
 }
 
 
@@ -71,16 +90,6 @@ void Vehicle::setTramI (int nouTramI)
 int Vehicle::getTramI()
 {
   return indexTram;
-}
-
-void Vehicle::setOriObj(float ori)
-{
-  ori_objectiu = ori;
-}
-
-float Vehicle::getOriObj()
-{
-  return ori_objectiu;
 }
 
 void Vehicle::setPos (Point p)
