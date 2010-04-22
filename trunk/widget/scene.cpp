@@ -151,29 +151,35 @@ void Scene::mouVehicle()
     }
   else
     {
-      
-
       //Hem de veure cap on girar, si dreta, esquerra dalt o baix.
      
       float heading_tram = circuit[veh.getTramI()].getOrientation();
       float desti_veh = veh.getDireccio(); 
 
-      Point mov_incr;
       mov.x = 0;
       mov.y = 0;
       mov.z = 0;
-      float tmp2, radi_gir = 0.5;
-
+      float radi_gir = 0.5;
+      double vx,vz;
       switch ((int)heading_tram)
 	{
 	case 180:
 	  switch ((int) desti_veh)
 	    {
 	    case 90:
-	      tmp2 = veh.getDireccio() - veh.getDireccioRealitzat(); 
-	      cout << tmp2 << endl;
-	      mov.x = (radi_gir * cos((ANGLE_GIR)*DEG2RAD))/tmp2;	      
-	      mov.z = (radi_gir * sin((ANGLE_GIR)*DEG2RAD)/tmp2);
+	      if (veh.getDireccioRealitzat() >= 45)
+		{
+		  vx = 0;
+		  vz = 1/50;
+		}
+	      else
+		{
+		  vx = -1/15;
+		  vz = 1/50;
+		}
+		
+	      mov.x = vx*(radi_gir * cos(90-veh.getDireccioRealitzat()*DEG2RAD));
+	      mov.z = (radi_gir * sin(90-veh.getDireccioRealitzat()*DEG2RAD));
 	      break;
 	    default:
 	      break;
@@ -182,15 +188,17 @@ void Scene::mouVehicle()
 	default:
 	  break;
 	}
-      
+
       veh.setPos(veh_pos+mov);
+
       veh.addDireccioRealitzat(ANGLE_GIR);      
+      cout << veh.getDireccioRealitzat();
+      if (veh.getDireccio() == veh.getDireccioRealitzat())
+	veh.setGirant(false);
     }
-
- if (veh.getDireccio() == veh.getDireccioRealitzat())
-   veh.setGirant(false);
-    
-
+  
+  
+  
   //En el seguent moviment, on estarem?
   seguent_tram = vehInTram(veh.getPos(),veh.getTramI());
   
@@ -233,8 +241,8 @@ void Scene::mouVehicle()
 	  //I a partir d'ara ens dirigirem cap aquí
 	  veh.setDireccio((float)dir);
 
-	  //Girarem a poc a poc
-	  veh.setDireccioRealitzat(dir - 90);
+	  //Girarem a poc a poc, a partir de gir de 0º fins a 90º
+	  veh.setDireccioRealitzat(0);
 	}
     }
 }
