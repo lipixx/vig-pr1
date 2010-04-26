@@ -11,7 +11,7 @@
 #define RAD2DEG 180/PI
 #define DEG2RAD PI/180
 #define RESOLUCIO_MOVIMENT 4.0 //En milisegons
-#define ANGLE_GIR 90.0 / 4.0
+#define STEP_ANGLE_GIR 90.0 / 4.0
 
 class Scene
 {

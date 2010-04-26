@@ -16,11 +16,30 @@ int Tram::seguentDireccio()
 {
   srand((unsigned)time(0));  
   uint random = rand() % 4;
+  uint dir = -1;
 
   while (seguents[random] == -1)
     random = (random + 1) % 4;
 
-  return random;
+  switch (random)
+	{
+	case XPOS:
+	  dir = 180;
+	  break;
+	case ZPOS:
+	  dir = 90;
+	  break;
+	case XNEG:
+	  dir = 0;
+	  break;
+	case ZNEG:
+	  dir = 270;
+	  break;
+	default:
+	  break;
+	}
+
+  return dir;
 }
 
 int Tram::getSeg(int direccio)
