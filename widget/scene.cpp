@@ -157,47 +157,114 @@ void Scene::mouVehicle()
       float desti_veh = veh.getDireccio(); 
 
       mov.x = 0;
-      mov.y = 0;
+      mov.y = 0.1;
       mov.z = 0;
-      float radi_gir = 0.5;
-      double vx,vz;
-      switch ((int)heading_tram)
+      // float radi_gir = 0.5;
+      float angle_realitzat = veh.getDireccioRealitzat();
+      Point pgir = veh.getPuntGir();
+
+      if (heading_tram == 180)
 	{
-	case 180:
 	  switch ((int) desti_veh)
 	    {
 	    case 90:
-	      if (veh.getDireccioRealitzat() >= 45)
-		{
-		  vx = 0;
-		  vz = 1/50;
-		}
-	      else
-		{
-		  vx = -1/15;
-		  vz = 1/50;
-		}
-		
-	      mov.x = vx*(radi_gir * cos(90-veh.getDireccioRealitzat()*DEG2RAD));
-	      mov.z = (radi_gir * sin(90-veh.getDireccioRealitzat()*DEG2RAD));
-	      break;
-	    default:
-	      break;
+	      {
+		veh.addDireccioRealitzat(-1);
+		//Anem X=180 i girem a ZPOS, fletxa dreta.
+		mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;
+		if (angle_realitzat == 0)
+		  veh.setGirant(false);
+		break;
+	      }
+	    case 270:
+	      {
+		veh.addDireccioRealitzat(1);
+		//Anem X=180 i girem a ZPOS, fletxa dreta.
+		mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		mov.z = pgir.z - (1-sin(angle_realitzat*DEG2RAD))/2;
+		break;
+	      }
 	    }
-	  break;
-	default:
-	  break;
 	}
+      else
+	if (heading_tram == 0)
+	  {
+	    switch ((int) desti_veh)
+	      {
+	      case 90:
+		{
+		  veh.addDireccioRealitzat(1);
+		  mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		  mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;
+		  break;
+		}
+	      case 270:
+		{
+		  veh.addDireccioRealitzat(-1);
+		  mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		  mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;
+		  break;
+		}		
+	      default:
+		break;
+	      }
+	  }
+      else
+	if (heading_tram == 270)
+	  {
+	    switch ((int) desti_veh)
+	      {
+	      case 0:
+		{
+		  veh.addDireccioRealitzat(1);
+		  mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		  mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;
+		  break;
+		}
+	      case 180:
+		{
+		  veh.addDireccioRealitzat(-1);
+		  mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		  mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;
+		  break;
+		}
+	      default:
+		break;
+	      }
+	  }
+	else
+	  if (heading_tram == 90)
+	    {
+	      switch ((int) desti_veh)
+		{
+		case 0:
+		  {
+		    cout <<"0:" <<angle_realitzat << endl;
+		    veh.addDireccioRealitzat(-1);
+		    mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		    mov.z = pgir.z + (sin(angle_realitzat*DEG2RAD))/2;
+		    if (angle_realitzat == 0)
+		      veh.setGirant(false);	    
+		    break;
+		  }
+		case 180:
+		  {
+		    cout << angle_realitzat << endl;
+		    veh.addDireccioRealitzat(1);
+		    mov.x = pgir.x + (1-cos(angle_realitzat*DEG2RAD))/2;
+		    mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;		    
+		    if (angle_realitzat == 180)
+		      veh.setGirant(false);
+		    break;
+		  }
+		default:
+		  break;
+		}
+	    }
 
-      veh.setPos(veh_pos+mov);
-
-      veh.addDireccioRealitzat(ANGLE_GIR);      
-      cout << veh.getDireccioRealitzat();
-      if (veh.getDireccio() == veh.getDireccioRealitzat())
-	veh.setGirant(false);
+      veh.setPos(mov);
     }
-  
-  
   
   //En el seguent moviment, on estarem?
   seguent_tram = vehInTram(veh.getPos(),veh.getTramI());
@@ -214,35 +281,64 @@ void Scene::mouVehicle()
       //Hem de veure on ens portarà aquest tram, per veure si s'ha 
       //de fer gir o no
       int dir = circuit[seguent_tram].seguentDireccio();
-      
-      switch (dir)
-	{
-	case XPOS:
-	  dir = 180;
-	  break;
-	case ZPOS:
-	  dir = 90;
-	  break;
-	case XNEG:
-	  dir = 0;
-	  break;
-	case ZNEG:
-	  dir = 270;
-	  break;
-	default:
-	  break;
-	}
 
       if (veh.getDireccio() != dir)
 	{
 	  //Haurem d'iniciar sa giravoga
 	  veh.setGirant(true);
+
+	  //Punt inicial de gir
+	  veh.setPuntGir(veh.getPos());
+
+	  //Girarem a poc a poc, a partir de 0 graus a 90
+	  //fins al nou angle
+	  if (circuit[seguent_tram].getOrientation() == 180)
+	    switch(dir)
+	      {
+	      case 90:
+		veh.setDireccioRealitzat(90);
+		break;
+	      case 270:
+		veh.setDireccioRealitzat(270);
+		break;
+	      }
 	  
+	  else
+	    if (circuit[seguent_tram].getOrientation() == 270)
+	      switch (dir)
+		{
+		case 0:
+		  veh.setDireccioRealitzat(180);
+		  break;
+		case 180:
+		  veh.setDireccioRealitzat(360);
+		  break;
+		}
+	    else
+	      if (circuit[seguent_tram].getOrientation() == 0)
+	      switch (dir)
+		{
+		case 90:
+		  veh.setDireccioRealitzat(270);
+		  break;
+		case 270:
+		  veh.setDireccioRealitzat(90);
+		  break;
+		}
+	      else
+		if (circuit[seguent_tram].getOrientation() == 90)
+		  switch (dir)
+		    {
+		    case 0:
+		      veh.setDireccioRealitzat(90);
+		      break;
+		    case 180:
+		      veh.setDireccioRealitzat(90);
+		      break;
+		    }
+
 	  //I a partir d'ara ens dirigirem cap aquí
 	  veh.setDireccio((float)dir);
-
-	  //Girarem a poc a poc, a partir de gir de 0º fins a 90º
-	  veh.setDireccioRealitzat(0);
 	}
     }
 }

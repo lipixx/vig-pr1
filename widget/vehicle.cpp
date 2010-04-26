@@ -46,6 +46,16 @@ float Vehicle::getDireccio()
   return angle_direccio;
 }
 
+void Vehicle::setPuntGir(Point n_punt_gir)
+{
+  punt_gir = n_punt_gir;
+}
+
+Point Vehicle::getPuntGir()
+{
+  return punt_gir;
+}
+
 void Vehicle::setDireccioRealitzat(float angledireccio)
 {
   angle_direccio_realitzat = angledireccio;

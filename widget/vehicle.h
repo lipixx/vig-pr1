@@ -17,7 +17,7 @@ class Vehicle
   int indexTram;
   bool girant;
   float velocitat;
-  
+  Point punt_gir;
   
   //Ens indica si hem carregat el vehicle
   bool veh_carregat;
@@ -58,6 +58,9 @@ public:
   float getDireccio();
   float getDireccioRealitzat();
   void addDireccioRealitzat(float);
+
+  void setPuntGir(Point n_punt_gir);
+  Point getPuntGir();
 
   void Render ();
   bool enabled();
