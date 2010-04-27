@@ -121,7 +121,7 @@ void Scene::carregaVehicle(const char* filename)
   pos.y += 0.1;
   veh.setPos(pos);
   veh.setTramI(0);
-  veh.setVelocitat(1.5);
+  veh.setVelocitat(2.5);
   veh.setOrientation(ori);
   veh.setGirant(false);
   veh.setDireccio((float)ori);
@@ -148,6 +148,7 @@ void Scene::mouVehicle()
     {
       mov = getNextMov(v_ori);
       veh.setPos(mov+veh_pos);
+      cout << veh.getPos() << endl;
     }
   else
     {
@@ -173,6 +174,7 @@ void Scene::mouVehicle()
 		//Anem X=180 i girem a ZPOS, fletxa dreta.
 		mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
 		mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;
+		veh.setPos(mov);
 		if (angle_realitzat == 0)
 		  veh.setGirant(false);
 		break;
@@ -180,9 +182,11 @@ void Scene::mouVehicle()
 	    case 270:
 	      {
 		veh.addDireccioRealitzat(1);
-		//Anem X=180 i girem a ZPOS, fletxa dreta.
-		mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
+		mov.x = pgir.x - (cos(angle_realitzat*DEG2RAD))/2;
 		mov.z = pgir.z - (1-sin(angle_realitzat*DEG2RAD))/2;
+		veh.setPos(mov);
+		if (angle_realitzat == 360)
+		  veh.setGirant(false);
 		break;
 	      }
 	    }
@@ -229,6 +233,18 @@ void Scene::mouVehicle()
 		  mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;
 		  break;
 		}
+	      case 270:
+		{
+		  //Tram perpendicular cap a l'esquerra
+		  veh.addDireccioRealitzat(1);
+		  cout << pgir << "." << endl;
+		  mov.x = pgir.x + (sin(angle_realitzat*DEG2RAD))/2;
+		  mov.z = pgir.z + (cos(angle_realitzat*DEG2RAD))/2;
+		  cout << mov << endl;
+		  veh.setPos(mov);
+		  if (angle_realitzat == 180)
+		    veh.setGirant(false);	    
+		}
 	      default:
 		break;
 	      }
@@ -240,20 +256,20 @@ void Scene::mouVehicle()
 		{
 		case 0:
 		  {
-		    cout <<"0:" <<angle_realitzat << endl;
 		    veh.addDireccioRealitzat(-1);
-		    mov.x = pgir.x + (cos(angle_realitzat*DEG2RAD))/2;
-		    mov.z = pgir.z + (sin(angle_realitzat*DEG2RAD))/2;
+		    mov.x = pgir.x - (1-sin(angle_realitzat*DEG2RAD))/2;
+		    mov.z = pgir.z + (cos(angle_realitzat*DEG2RAD))/2;
+		    veh.setPos(mov);
 		    if (angle_realitzat == 0)
 		      veh.setGirant(false);	    
-		    break;
+		      break;
 		  }
 		case 180:
 		  {
-		    cout << angle_realitzat << endl;
 		    veh.addDireccioRealitzat(1);
-		    mov.x = pgir.x + (1-cos(angle_realitzat*DEG2RAD))/2;
-		    mov.z = pgir.z + (1-sin(angle_realitzat*DEG2RAD))/2;		    
+		    mov.x = pgir.x + (1-sin(angle_realitzat*DEG2RAD))/2;
+		    mov.z = pgir.z - (cos(angle_realitzat*DEG2RAD))/2;		    
+		    veh.setPos(mov);
 		    if (angle_realitzat == 180)
 		      veh.setGirant(false);
 		    break;
@@ -263,7 +279,6 @@ void Scene::mouVehicle()
 		}
 	    }
 
-      veh.setPos(mov);
     }
   
   //En el seguent moviment, on estarem?
@@ -289,7 +304,7 @@ void Scene::mouVehicle()
 
 	  //Punt inicial de gir
 	  veh.setPuntGir(veh.getPos());
-
+	  
 	  //Girarem a poc a poc, a partir de 0 graus a 90
 	  //fins al nou angle
 	  if (circuit[seguent_tram].getOrientation() == 180)
@@ -312,6 +327,10 @@ void Scene::mouVehicle()
 		  break;
 		case 180:
 		  veh.setDireccioRealitzat(360);
+		  break;
+		case 270:
+		  //Tram perpendicular cap a l'esquerra
+		  veh.setDireccioRealitzat(90);
 		  break;
 		}
 	    else
